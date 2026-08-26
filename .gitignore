@@ -40,10 +40,25 @@ vignettes/*.pdf
 .Renviron
 
 # pkgdown site
-docs/
+# docs/
 
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Generated project data and outputs. Keep scaffold markers tracked.
+data/*
+!data/raw/
+!data/processed/
+!data/features/
+data/raw/**
+data/processed/**
+data/features/**
+!data/*/.gitkeep
+outputs/*
+!outputs/plots/
+outputs/plots/**
+!outputs/.gitkeep
+!outputs/plots/.gitkeep
