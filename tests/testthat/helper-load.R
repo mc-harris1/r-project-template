@@ -1,0 +1,6 @@
+project_root <- normalizePath(test_path("..", ".."))
+setwd(project_root)
+source(file.path(project_root, "R/utils_shared.R"))
+source(file.path(project_root, "R/stage_0_load.R"))
+source(file.path(project_root, "R/stage_1_process.R"))
+source(file.path(project_root, "R/stage_2_analyze.R"))

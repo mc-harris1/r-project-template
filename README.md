@@ -18,6 +18,11 @@ and directory conventions separate from domain-specific work.
 │   ├── raw/          # User-provided or downloaded inputs
 │   ├── processed/    # Intermediate data products
 │   └── features/     # Derived features ready for analysis
+├── tests/
+│   └── testthat/     # Unit tests and shared test setup
+├── scripts/          # Environment, lint, and formatting commands
+├── uvr.toml          # Declared R and tooling dependencies
+└── uvr.lock          # Resolved, reproducible package environment
 └── outputs/
 	 └── plots/        # Generated figures and reports
 ```
@@ -28,19 +33,45 @@ project develops.
 
 ## Getting started
 
-1. Install R. The initial skeleton uses base R and has no required package
-	installation step.
-2. Put source files in `data/raw/` or replace the loader stage with the
-	appropriate download or import code.
-3. Run the complete pipeline from the repository root:
+Install the `uvr` CLI:
 
-```r
-source("main.R")
+```sh
+curl -fsSL https://raw.githubusercontent.com/nbafrank/uvr/main/install.sh | sh
 ```
 
-Optional dependencies can be managed with `renv`. Run `renv::init()` in the
-project root when the project has a stable package set, then commit the
-resulting lockfile.
+Restart the shell if `~/.local/bin` is not already on `PATH`, then initialize
+the project environment:
+
+```sh
+export UVR_LIBRARY="$HOME/.uvr/projects/r-project-template/library"
+bash scripts/setup_uvr.sh
+```
+
+The setup pins R 4.6.1, resolves the dependencies in `uvr.toml`, and writes
+the committed `uvr.lock`. Packages are installed outside the repository at
+`~/.uvr/projects/r-project-template/library` by default. Set `UVR_LIBRARY`
+before running setup to choose another local path.
+
+Restore the committed environment on later checkouts with:
+
+```sh
+uvr sync --frozen
+```
+
+Keep `UVR_LIBRARY` exported when invoking `uvr` directly so package binaries
+are not created in the repository's `.uvr/` directory.
+
+Put source files in `data/raw/` or replace the loader stage with the
+appropriate download or import code. Run the complete pipeline from the
+repository root:
+
+```sh
+uvr run main.R
+```
+
+The baseline dependency set contains the test and quality tools plus packages
+used by current template helpers. Add application-specific dependencies with
+`uvr add <package>` and commit the resulting `uvr.toml` and `uvr.lock` changes.
 
 ## Pipeline stages
 
@@ -60,9 +91,49 @@ when they are shared by multiple stages.
 
 ## Configuration
 
-`.Rprofile` enables a useful `renv` setting when `renv` is present. `.lintr`
+`.Rprofile` activates the `uvr` library and checks the R version pin. `.lintr`
 contains a lightweight linting configuration, and `.vscode/settings.json`
 disables automatic R language-server installation prompts.
+
+## Testing
+
+Run the unit suite from the repository root:
+
+```sh
+uvr run tests/testthat.R
+```
+
+Tests use `tests/testthat/helper-load.R` to source the template's pipeline
+scripts. Add project tests as `test-*.R` files in `tests/testthat/`.
+
+## Code quality
+
+Lint the R source:
+
+```sh
+uvr run scripts/lint.R
+```
+
+Format project-owned R source and tests before committing:
+
+```sh
+uvr run scripts/style.R
+```
+
+Install the repository hooks after installing the `pre-commit` CLI:
+
+```sh
+pre-commit install
+```
+
+`.pre-commit-config.yaml` applies tidyverse R styling, checks R syntax, blocks
+`browser()` and `print()` statements, and enforces standard whitespace and
+large-file checks. Generated `data/` and `outputs/` files are excluded from
+the R-specific hooks.
+
+GitHub Actions runs linting on every push and pull request. The quality-check
+workflow runs the frozen `uvr` environment, linting, and `testthat` for pushes
+and pull requests targeting `main`.
 
 This template intentionally contains no data source, statistical method, or
 domain-specific analysis. A financial-market workflow such as

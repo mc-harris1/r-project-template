@@ -81,7 +81,11 @@ write_state <- function(path, state) {
 
 resolve_last_date <- function(key, raw_path, state) {
   csv_date <- get_last_date_from_csv(raw_path)
-  state_date <- if (!is.null(state[[key]])) as.Date(state[[key]]) else as.Date(NA)
+  state_date <- if (!is.null(state[[key]])) {
+    as.Date(state[[key]])
+  } else {
+    as.Date(NA)
+  }
   dates <- c(csv_date, state_date)
   if (all(is.na(dates))) {
     return(as.Date(NA))

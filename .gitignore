@@ -39,6 +39,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+# uvr environment cache
+.uvr/
+
 # pkgdown site
 # docs/
 
