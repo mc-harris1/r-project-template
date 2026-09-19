@@ -38,9 +38,17 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+.env
 
-# uvr environment cache
-.uvr/
+# Local editor settings (kept out of the repo for editor-agnosticism)
+.vscode/
+
+# renv library cache (renv::init() also manages entries here)
+renv/library/
+renv/local/
+renv/cellar/
+renv/python/
+renv/sandbox/
 
 # pkgdown site
 # docs/
@@ -65,3 +73,6 @@ outputs/*
 outputs/plots/**
 !outputs/.gitkeep
 !outputs/plots/.gitkeep
+.Rproj.user
+data/raw/
+.DS_Store
